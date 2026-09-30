@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { parseAmount, parseQuickEntry, type ParserCategory } from "./quick-entry.ts";
 import { DEFAULT_CATEGORIES } from "../constants/categories.ts";
 
-const cats: ParserCategory[] = DEFAULT_CATEGORIES.map((c, i) => ({
+const cats: ParserCategory[] = DEFAULT_CATEGORIES.map((c) => ({
   id: `${c.type}:${c.name}`,
   name: c.name,
   type: c.type,

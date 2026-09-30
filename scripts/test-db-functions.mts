@@ -13,7 +13,8 @@ if (isLocal()) await migrate(db, false);
 let passed = 0;
 let failed = 0;
 function check(name: string, ok: boolean, detail: unknown = "") {
-  ok ? passed++ : failed++;
+  if (ok) passed++;
+  else failed++;
   console.log(`${ok ? "✓" : "✗"} ${name}${detail !== "" ? ` — ${typeof detail === "string" ? detail : JSON.stringify(detail)}` : ""}`);
 }
 const num = (v: unknown) => Number(v);
