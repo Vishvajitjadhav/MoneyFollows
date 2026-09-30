@@ -6,6 +6,7 @@ import { Section } from "@/components/layout/page";
 import { MoneyText } from "@/components/money-text";
 import { StatCard } from "@/components/stat-card";
 import { AddButton } from "@/components/transactions/add-button";
+import { AutoOpenAdd } from "@/components/transactions/auto-open-add";
 import { QuickEntryBar } from "@/components/transactions/quick-entry-bar";
 import { TransactionCard } from "@/components/transactions/transaction-list";
 import { BudgetBar } from "@/components/budgets/budget-bar";
@@ -16,7 +17,9 @@ import { formatMonth, monthRange, previousRange, todayISO } from "@/lib/dates";
 import { formatPercent } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function HomePage() {
+export default async function HomePage({ searchParams }: PageProps<"/">) {
+  const { add } = await searchParams;
+  const autoAdd = add === "expense" ? "EXPENSE" : add === "income" ? "INCOME" : add === "investment" ? "INVESTMENT" : null;
   const user = await requireUser();
   const today = todayISO();
   const month = monthRange(today);
@@ -41,6 +44,7 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 pt-[max(env(safe-area-inset-top),1.25rem)] pb-8 md:px-8 md:pt-8">
+      {autoAdd && <AutoOpenAdd type={autoAdd} />}
       {/* Header */}
       <header className="mb-5 flex items-center justify-between md:mb-7">
         <div>

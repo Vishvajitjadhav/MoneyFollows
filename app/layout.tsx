@@ -21,6 +21,8 @@ export const metadata: Metadata = {
   },
   description: "Know where your money goes. Track expenses, income, investments and savings in seconds.",
   applicationName: "MoneyFollows",
+  appleWebApp: { capable: true, title: "MoneyFollows", statusBarStyle: "default" },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {

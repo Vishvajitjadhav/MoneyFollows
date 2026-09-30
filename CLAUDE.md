@@ -17,4 +17,7 @@ Mobile-first personal finance PWA — "Follow your money."
 - Validate every input with Zod (`lib/validations`). Money math lives in `lib/calculations` as pure functions.
 - Coral `#E85D5D` is for CTAs, active nav, highlights and selection only — don't make the UI red.
 - No AI, no separate backend, no paid services in V1.
-- Verify before ticking: `npm run check` (typecheck + lint + build).
+- Verify before ticking: `npm run check` (typecheck + lint + build), `npm test`, `npm run db:test` (PGlite, no Supabase needed).
+- DB changes = a new numbered file in `database/migrations/` + update `types/database.ts` + tests in `scripts/test-*.mts`. Never edit an applied migration.
+- Client code calls Server Actions through `safeAction()` so failures never lose form input.
+- Dev-only previews with sample data: `/design`, `/design/app`, `/design/sample-pdf`.

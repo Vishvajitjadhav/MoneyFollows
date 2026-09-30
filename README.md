@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MoneyFollows
 
-## Getting Started
+**Follow your money.** A mobile-first personal finance PWA: record an expense in five seconds, then understand where your money goes.
 
-First, run the development server:
+Next.js 16 · Tailwind v4 · shadcn/ui · Supabase (Postgres + Auth, RLS) · Recharts · react-pdf · Vercel free tier.
+
+## Run it
 
 ```bash
+npm install
+cp .env.example .env.local   # fill Supabase URL, publishable key, DB password
+npm run db:migrate           # create tables, RLS, functions in Supabase
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Without Supabase env the app shows `/setup`; `/design/app` and `/design/sample-pdf` preview the UI and PDF with sample data.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Checks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run check     # typecheck + lint + build
+npm test          # unit tests
+npm run db:test   # migrations + RLS + SQL tests on in-memory Postgres (PGlite)
+```
 
-## Learn More
+## Docs
 
-To learn more about Next.js, take a look at the following resources:
+- [PLAN.md](PLAN.md) — roadmap and progress
+- [docs/SPEC.md](docs/SPEC.md) — product spec
+- [docs/BRAND.md](docs/BRAND.md) — brand guide
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy (Vercel)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Import the repo, add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL` (your Vercel URL), and add `https://<your-app>.vercel.app/**` to Supabase → Authentication → Redirect URLs.

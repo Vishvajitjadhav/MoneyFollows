@@ -11,9 +11,9 @@
     "check": "npm run typecheck && npm run lint && npm run build",
     "icons": "node scripts/generate-icons.mts",
     "db:migrate": "node --env-file=.env.local scripts/db-migrate.mts",
-    "db:test-rls": "node --env-file=.env.local scripts/test-rls.mts",
     "db:test": "node scripts/test-rls.mts --local && node scripts/test-db-functions.mts --local",
-    "test": "node --test \"lib/**/*.test.ts\""
+    "test": "node --test \"lib/**/*.test.ts\"",
+    "db:test-rls:live": "node --env-file=.env.local scripts/test-rls.mts"
   },
   "dependencies": {
     "@fontsource/inter": "^5.3.0",
