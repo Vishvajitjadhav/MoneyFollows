@@ -160,7 +160,7 @@ Separation rule: **UI ↔ business logic ↔ database ↔ validation ↔ calcula
 ### 1.7 Row Level Security (`database/migrations/0002_rls.sql`) — written, NOT applied yet
 - [x] RLS enabled on every table; select/insert/update/delete only where `user_id = (select auth.uid())`; anon revoked
 - [x] Seed/trigger functions `security definer` + `search_path = ''`, execute revoked from clients
-- [ ] `npm run db:test-rls` passes (18 checks: isolation, cross-user FK abuse, type/subcategory mismatch, anon denied — all in a rolled-back transaction)
+- [ ] `npm run db:test-rls` passes (19 checks: isolation, cross-user FK abuse, type/subcategory mismatch, anon denied — all in a rolled-back transaction)
 
 ### 1.8 Responsive app shell
 - [ ] Mobile: bottom nav `Home | History | + | Analysis | More`, center + is the hero
