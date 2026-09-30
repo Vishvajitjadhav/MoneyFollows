@@ -13,7 +13,7 @@
 
 ## ▶ NEXT UP
 
-**Phase 1 → 1.2 Design system** (tokens in `app/globals.css`, money typography, base components)
+**Phase 1 → 1.3 Logo & branding** (MF monogram SVG, `components/brand/Logo.tsx`, favicon + PWA icons)
 
 _Update this pointer whenever a task is completed._
 
@@ -23,7 +23,8 @@ _Update this pointer whenever a task is completed._
 
 | Date | What was done |
 |------|---------------|
-| 2026-09-30 | Project setup: Next.js 16.3 + React 19 + TS + Tailwind v4 + shadcn/ui (radix-nova) + deps. Folder structure. PLAN.md created. |
+| 2026-09-30 | Project setup: Next.js 16.3 + React 19 + TS + Tailwind v4 + shadcn/ui (radix-nova) + deps. Folder structure. PLAN.md created. Pushed to GitHub `main`. |
+| 2026-09-30 | 1.2 Design system on branch `feature/design-system`: brand tokens, money utilities, `formatINR`, StatCard/MoneyText/EmptyState/PageHeader/CategoryIcon, Toaster, `/design` preview. |
 
 ---
 
@@ -102,13 +103,15 @@ Separation rule: **UI ↔ business logic ↔ database ↔ validation ↔ calcula
 - [x] Inter font wired in `app/layout.tsx`, app metadata
 - [x] PLAN.md + CLAUDE.md pointer
 
-### 1.2 Design system
-- [ ] Brand color tokens in `app/globals.css` (primary coral, secondary, success, warning, background, border, chart palette)
-- [ ] Money typography utilities (`.money`, tabular nums, sizes xl/lg/md)
-- [ ] Shared `formatINR()` currency formatter (`lib/format.ts`) — ₹, Indian digit grouping (1,00,000)
-- [ ] Base components: `StatCard`, `MoneyText`, `EmptyState`, `PageHeader`, `CategoryIcon` (color + Lucide icon per category)
-- [ ] Toaster (Sonner) + TooltipProvider in root layout
-- [ ] Design-system preview page (dev only) to eyeball tokens
+### 1.2 Design system ✅
+- [x] Brand color tokens in `app/globals.css` (brand, brand-soft, success, warning, income/expense/invest, chart palette, `shadow-card`, `shadow-float`; `.dark` defined for later)
+- [x] Money typography utilities (`money`, `money-hero` — tabular nums) + `pb-safe`/`pt-safe`
+- [x] `lib/format.ts` — `formatINR` (₹, Indian grouping, signed/compact/paise), `formatCompact` (K/L/Cr), `formatPercent`
+- [x] Base components: `components/stat-card.tsx`, `money-text.tsx`, `empty-state.tsx`, `page-header.tsx`, `category-icon.tsx` (icon + color registries, keys stored as strings in DB)
+- [x] Default category definitions in `lib/constants/categories.ts` (expense / income / investment, icon + color + subcategories)
+- [x] shadcn tweaks: Button (h-11 default, `xl` size, `soft` variant, coral hover), Card (rounded-2xl, border + soft shadow), Input/Textarea (h-11, rounded-xl), Progress (`indicatorClassName`)
+- [x] Toaster (`components/ui/sonner.tsx`, top-center, branded) + TooltipProvider + mobile `viewport` in root layout
+- [x] Design-system preview page `/design` (dev only, 404 in production)
 
 ### 1.3 Logo & branding
 - [ ] Design MF monogram / money-trail SVG (icon-only) — test at 16/32/64/512px
@@ -277,4 +280,6 @@ CSV/bank statement import · auto-categorization · subscription detection · AI
 - **2026-09-30** — Next.js 16.3.7 (latest) chosen; uses `proxy.ts` instead of `middleware.ts`.
 - **2026-09-30** — shadcn `radix-nova` style with Radix primitives; shadcn now uses the `cn` package (`lib/utils.ts` re-exports it).
 - **2026-09-30** — Amounts stored as `numeric(14,2)` (always positive); `type` decides sign. Currency INR by default (stored on profile for future).
+- **2026-09-30** — Category `icon`/`color` stored as string keys (e.g. `food`, `orange`) resolved by `components/category-icon.tsx`; unknown keys fall back to `other`/`slate`.
+- **2026-09-30** — Feature work happens on branches (`feature/<name>`), merged to `main` after verification.
 - **2026-09-30** — Default categories are seeded **per user** (rows owned by user) so users can rename/archive freely without global tables.
