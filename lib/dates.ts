@@ -150,3 +150,14 @@ export function monthStart(iso: ISODate): ISODate {
 export function shiftMonth(iso: ISODate, months: number): ISODate {
   return toISO(startOfMonth(addMonths(fromISO(iso), months)));
 }
+
+/** Every calendar day in a range (inclusive). */
+export function eachDay({ from, to }: DateRange): ISODate[] {
+  const out: ISODate[] = [];
+  for (let d = fromISO(from); toISO(d) <= to; d = addDays(d, 1)) out.push(toISO(d));
+  return out;
+}
+
+export function rangeDays({ from, to }: DateRange): number {
+  return differenceInCalendarDays(fromISO(to), fromISO(from)) + 1;
+}
