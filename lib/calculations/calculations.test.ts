@@ -112,3 +112,15 @@ test("plan allocation always sums to 100 and respects commitments", () => {
     if (c.income > 0) assert.ok(a.family >= Math.floor((c.familySupport / c.income) * 100) - 1);
   }
 });
+
+import { recurrenceNextClient } from "../recurrence.ts";
+
+test("recurrenceNextClient matches SQL recurrence_next", () => {
+  assert.equal(recurrenceNextClient("2026-01-31", "2026-01-31", "MONTHLY"), "2026-02-28");
+  assert.equal(recurrenceNextClient("2026-01-31", "2026-02-28", "MONTHLY"), "2026-03-31");
+  assert.equal(recurrenceNextClient("2026-09-01", "2026-09-10", "WEEKLY"), "2026-09-15");
+  assert.equal(recurrenceNextClient("2024-02-29", "2024-02-29", "YEARLY"), "2025-02-28");
+  assert.equal(recurrenceNextClient("2026-09-05", "2026-09-01", "MONTHLY"), "2026-09-05");
+  assert.equal(recurrenceNextClient("2026-09-01", "2026-09-29", "DAILY"), "2026-09-30");
+  assert.equal(recurrenceNextClient("2026-07-01", "2026-09-30", "MONTHLY"), "2026-10-01");
+});
