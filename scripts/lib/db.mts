@@ -24,7 +24,7 @@ export async function connect(): Promise<Db> {
 
   const connectionString = process.env.DIRECT_URL ?? process.env.DATABASE_URL;
   if (!connectionString) throw new Error("DIRECT_URL is not set in .env.local (or pass --local)");
-  if (/\[YOUR-PASSWORD\]/i.test(connectionString)) {
+  if (/:\[[^\]]*\]@/.test(connectionString)) {
     throw new Error("DIRECT_URL still contains [YOUR-PASSWORD] — put your real database password in .env.local");
   }
   const { default: pg } = await import("pg");
