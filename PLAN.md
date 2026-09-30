@@ -20,7 +20,8 @@ Anything that needs the real Supabase project is tracked separately in **Live ve
 
 1. **User:** in `.env.local` replace `[YOUR-PASSWORD]` in `DATABASE_URL` + `DIRECT_URL` with the real DB password, and fill `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (Supabase → Project Settings → API Keys).
 2. **User:** Supabase → Authentication → URL Configuration → Site URL `http://localhost:3000`, Redirect URLs `http://localhost:3000/**` (+ the Vercel URL once deployed).
-3. `npm run db:migrate` (applies 0001–0005) → `npm run db:test-rls:live` → `node --env-file=.env.local scripts/test-db-functions.mts` — all must be ✓.
+3. ✅ Schema applied via SQL Editor (`npm run db:bundle` → paste `database/supabase-setup.sql`). Future migrations: `npm run db:migrate` (needs DB password) or re-bundle.
+   Then → `npm run db:test-rls:live` → `node --env-file=.env.local scripts/test-db-functions.mts` — all must be ✓.
 4. Work through **Live verification** below in the browser (mobile 375px + desktop), fix anything found, tick boxes.
 5. Merge `feature/supabase-auth` → `main`, deploy to Vercel (env vars!), repeat the phone acceptance test on a real phone.
 
@@ -30,7 +31,8 @@ _Update this pointer whenever a task is completed._
 
 ## Live verification (needs real Supabase) — do these next
 
-- [ ] Migrations applied to Supabase; RLS test (19) + function tests (22) pass against the live DB
+- [x] Migrations applied to Supabase (2026-09-30, via SQL Editor with `database/supabase-setup.sql`); anon REST probe → `permission denied` on every table/function ✓
+- [ ] RLS test (19) + function tests (22) against the live DB — needs the real DB password in `DIRECT_URL`
 - [ ] Sign up → confirmation email → lands in app with 24 default categories seeded
 - [ ] Login (incl. `?next=` redirect), logout, wrong password message
 - [ ] Forgot password → email link → `/reset-password` → new password works
@@ -132,7 +134,7 @@ proxy.ts             session refresh + route protection
 - [x] MF-trail mark, Logo components, `npm run icons` (favicon, apple, PWA, brand kit), `docs/BRAND.md`
 
 ### 1.4 Supabase setup
-- [ ] Supabase project fully configured in `.env.local` (URL ✓, publishable key ✗, DB password ✗) — **user**
+- [ ] Supabase project fully configured in `.env.local` (URL ✓, publishable key ✓, DB password ✗ — only needed for `db:migrate`/live tests) — **user**
 - [x] Server/browser clients, `proxy.ts` session refresh + redirects, typed `Database` (tables, enums, functions)
 - [x] `/setup` page instead of crashing when env is missing
 - [x] Migration runner (`app_private.migrations`), PGlite adapter for local tests
