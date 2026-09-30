@@ -5,15 +5,13 @@
  * Creates users A and B (the signup trigger seeds their categories), then
  * impersonates each as the `authenticated` role and checks isolation.
  *
- *   npm run db:test-rls
+ *   npm run db:test-rls            against Supabase
+ *   npm run db:test-rls -- --local on in-memory PGlite
  */
-import pg from "pg";
+import { connect, isLocal, migrate } from "./lib/db.mts";
 
-const connectionString = process.env.DIRECT_URL ?? process.env.DATABASE_URL;
-if (!connectionString) throw new Error("DIRECT_URL is not set (.env.local)");
-const url = new URL(connectionString);
-url.searchParams.delete("sslmode");
-const db = new pg.Client({ connectionString: url.toString(), ssl: { rejectUnauthorized: false } });
+const db = await connect();
+if (isLocal()) await migrate(db, false);
 
 let passed = 0;
 let failed = 0;
@@ -55,7 +53,6 @@ async function rejects(sql: string, params: unknown[] = []) {
   }
 }
 
-await db.connect();
 try {
   await db.query("begin");
 
@@ -171,7 +168,7 @@ try {
   });
 } finally {
   await db.query("rollback").catch(() => {});
-  await db.end();
+  await db.close();
 }
 
 console.log(`\n${failed === 0 ? "✓" : "✗"} ${passed} passed, ${failed} failed (all test data rolled back)`);

@@ -11,7 +11,8 @@
     "check": "npm run typecheck && npm run lint && npm run build",
     "icons": "node scripts/generate-icons.mts",
     "db:migrate": "node --env-file=.env.local scripts/db-migrate.mts",
-    "db:test-rls": "node --env-file=.env.local scripts/test-rls.mts"
+    "db:test-rls": "node --env-file=.env.local scripts/test-rls.mts",
+    "db:test": "node scripts/test-rls.mts --local"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -36,6 +37,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/pg": "^8.23.1",
