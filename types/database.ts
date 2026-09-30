@@ -45,6 +45,28 @@ type SubcategoryRel = {
   referencedColumns: ["id", "user_id", "category_id"];
 };
 
+/** Row returned by find_transactions(): one page + totals of the whole filtered set. */
+export type FoundTransaction = {
+  id: string;
+  type: TransactionType;
+  amount: number;
+  transaction_date: string;
+  description: string | null;
+  notes: string | null;
+  is_purchase: boolean;
+  category_id: string;
+  category_name: string;
+  category_icon: string;
+  category_color: string;
+  subcategory_id: string | null;
+  subcategory_name: string | null;
+  created_at: string;
+  total_count: number;
+  total_expense: number;
+  total_income: number;
+  total_investment: number;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -232,7 +254,52 @@ export type Database = {
       >;
     };
     Views: { [_ in never]: never };
-    Functions: { [_ in never]: never };
+    Functions: {
+      period_summary: {
+        Args: { p_from: string; p_to: string };
+        Returns: { type: TransactionType; total: number; count: number }[];
+      };
+      category_totals: {
+        Args: { p_from: string; p_to: string; p_type?: TransactionType; p_purchase_only?: boolean };
+        Returns: { category_id: string; name: string; icon: string; color: string; total: number; count: number }[];
+      };
+      subcategory_totals: {
+        Args: { p_category_id: string; p_from: string; p_to: string };
+        Returns: { subcategory_id: string | null; name: string; total: number; count: number }[];
+      };
+      daily_totals: {
+        Args: { p_from: string; p_to: string; p_type?: TransactionType };
+        Returns: { day: string; total: number; count: number }[];
+      };
+      monthly_totals: {
+        Args: { p_from: string; p_to: string };
+        Returns: { month: string; income: number; expense: number; investment: number }[];
+      };
+      find_transactions: {
+        Args: {
+          p_query?: string | null;
+          p_from?: string | null;
+          p_to?: string | null;
+          p_type?: TransactionType | null;
+          p_category_id?: string | null;
+          p_subcategory_id?: string | null;
+          p_min?: number | null;
+          p_max?: number | null;
+          p_purchase_only?: boolean;
+          p_limit?: number;
+          p_offset?: number;
+        };
+        Returns: FoundTransaction[];
+      };
+      recurrence_next: {
+        Args: { p_start: string; p_after: string; p_frequency: RecurrenceFrequency };
+        Returns: string;
+      };
+      generate_recurring_transactions: {
+        Args: { p_today?: string };
+        Returns: number;
+      };
+    };
     Enums: {
       transaction_type: TransactionType;
       recurrence_frequency: RecurrenceFrequency;
