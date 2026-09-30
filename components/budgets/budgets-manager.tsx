@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { AmountInput, Field, FormSheet, Select } from "@/components/form-sheet";
 import { Button } from "@/components/ui/button";
 import { copyPreviousBudgets, deleteBudget, saveBudget } from "@/lib/actions/planning";
+import { safeAction } from "@/lib/safe-action";
 import type { BudgetWithUsage } from "@/lib/data/budgets";
 import type { Category } from "@/types/app";
 import { BudgetBar } from "./budget-bar";
@@ -36,7 +37,7 @@ export function BudgetsManager({ month, budgets, categories, canCopy }: { month:
             disabled={copying}
             onClick={() =>
               startCopy(async () => {
-                const r = await copyPreviousBudgets(month);
+                const r = await safeAction(() => copyPreviousBudgets(month));
                 if (r.ok) toast.success(r.data.copied ? `Copied ${r.data.copied} budgets from last month.` : "Nothing new to copy.");
                 else toast.error(r.error);
               })

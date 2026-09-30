@@ -10,6 +10,7 @@ import { MoneyText } from "@/components/money-text";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { deleteRecurring, saveRecurring, setRecurringActive } from "@/lib/actions/planning";
+import { safeAction } from "@/lib/safe-action";
 import { formatShortDate, todayISO } from "@/lib/dates";
 import { FREQUENCY_LABEL, type Frequency } from "@/lib/recurrence";
 import { cn } from "@/lib/utils";
@@ -146,7 +147,7 @@ export function RecurringManager({ items, categories }: { items: RecurringRow[];
                     aria-label={r.active ? "Pause" : "Resume"}
                     onClick={() =>
                       start(async () => {
-                        const res = await setRecurringActive(r.id, !r.active);
+                        const res = await safeAction(() => setRecurringActive(r.id, !r.active));
                         if (res.ok) toast.success(r.active ? "Paused." : "Resumed.");
                         else toast.error(res.error);
                       })

@@ -7,6 +7,7 @@ import { AmountInput, Field } from "@/components/form-sheet";
 import { MoneyText } from "@/components/money-text";
 import { Button } from "@/components/ui/button";
 import { savePlan } from "@/lib/actions/planning";
+import { safeAction } from "@/lib/safe-action";
 import { allocationAmounts, allocationTotal, BUCKETS, suggestAllocation, type Allocation, type BucketKey, type PlanInputs } from "@/lib/calculations/plan";
 import { formatINR } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -117,7 +118,7 @@ export function Planner({ month, initialInputs, initialAllocation }: Props) {
                   disabled={pending || total !== 100}
                   onClick={() =>
                     start(async () => {
-                      const r = await savePlan({ month, monthlyIncome: numeric.income, inputs: { rent: numeric.rent, emi: numeric.emi, familySupport: numeric.familySupport, investments: numeric.investments, goals: numeric.goals }, allocations: allocation });
+                      const r = await safeAction(() => savePlan({ month, monthlyIncome: numeric.income, inputs: { rent: numeric.rent, emi: numeric.emi, familySupport: numeric.familySupport, investments: numeric.investments, goals: numeric.goals }, allocations: allocation }));
                       if (r.ok) toast.success("Plan saved for this month.");
                       else toast.error(r.error);
                     })

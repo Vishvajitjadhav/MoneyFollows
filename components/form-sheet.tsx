@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { safeAction } from "@/lib/safe-action";
 import { cn } from "@/lib/utils";
 import type { ActionResult } from "@/types/app";
 
@@ -54,7 +55,7 @@ export function FormSheet({
   const run = (fn: () => Promise<ActionResult<unknown>>, message: string) =>
     startTransition(async () => {
       setError(null);
-      const r = await fn();
+      const r = await safeAction(fn);
       if (!r.ok) return setError(r.error);
       setConfirm(false);
       onOpenChange(false);

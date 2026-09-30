@@ -7,6 +7,7 @@ import { createTransaction, deleteTransaction } from "@/lib/actions/transactions
 import { todayISO } from "@/lib/dates";
 import { formatINR } from "@/lib/format";
 import { parseQuickEntry } from "@/lib/parsers/quick-entry";
+import { safeAction } from "@/lib/safe-action";
 import { cn } from "@/lib/utils";
 import { useTransactionSheet } from "./transaction-sheet";
 
@@ -36,14 +37,14 @@ export function QuickEntryBar({ className }: { className?: string }) {
     }
     const cat = categories.find((c) => c.id === parsed.categoryId)!;
     startTransition(async () => {
-      const r = await createTransaction({
+      const r = await safeAction(() => createTransaction({
         type: parsed.type,
         amount: parsed.amount,
         categoryId: parsed.categoryId!,
         subcategoryId: parsed.subcategoryId,
         date: todayISO(),
         description: parsed.description,
-      });
+      }));
       if (!r.ok) {
         toast.error(r.error);
         return;
@@ -51,7 +52,7 @@ export function QuickEntryBar({ className }: { className?: string }) {
       setText("");
       const kind = parsed.type === "EXPENSE" ? "expense" : parsed.type === "INCOME" ? "income" : "investment";
       toast.success(`${formatINR(parsed.amount)} ${cat.name} ${kind} added.`, {
-        action: { label: "Undo", onClick: () => void deleteTransaction(r.data.id) },
+        action: { label: "Undo", onClick: () => void safeAction(() => deleteTransaction(r.data.id)) },
       });
     });
   }

@@ -159,7 +159,8 @@ export function calculatePurchaseTotals(txs: TxLike[]): PurchaseTotals {
 }
 
 export function calculateAverageDaily(total: number, days: number): number {
-  return days > 0 ? round(total / days) : 0;
+  // Whole rupees: "₹1,050 a day" reads better than "₹1,049.67".
+  return days > 0 ? Math.round(total / days) : 0;
 }
 
 export type CategoryChange = { name: string; icon?: string; current: number; previous: number; change: number; changePct: number | null };

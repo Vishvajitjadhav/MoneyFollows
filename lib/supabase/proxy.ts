@@ -1,10 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import type { Database } from "@/types/database";
-import { getSupabaseEnv } from "./env";
+import { getSupabaseEnv, hasSupabaseEnv } from "./env";
 
 /** Routes reachable without signing in. Everything else requires a session. */
-const PUBLIC_PATHS = ["/login", "/signup", "/forgot-password", "/auth", "/design"];
+const PUBLIC_PATHS = ["/login", "/signup", "/forgot-password", "/auth", "/design", "/setup"];
 /** Signed-in users visiting these are sent to the app instead. */
 const AUTH_ONLY_PATHS = ["/login", "/signup", "/forgot-password"];
 
@@ -16,6 +16,13 @@ const matches = (pathname: string, paths: string[]) =>
  * Real authorization still happens server-side (getUser + RLS) on every query.
  */
 export async function updateSession(request: NextRequest) {
+  // Not configured yet → explain how, instead of crashing every page.
+  if (!hasSupabaseEnv()) {
+    const { pathname } = request.nextUrl;
+    if (pathname === "/setup" || pathname.startsWith("/design")) return NextResponse.next({ request });
+    return NextResponse.redirect(new URL("/setup", request.url));
+  }
+
   let response = NextResponse.next({ request });
   const { url, key } = getSupabaseEnv();
 

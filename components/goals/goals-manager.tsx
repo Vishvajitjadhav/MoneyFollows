@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { contributeToGoal, deleteGoal, saveGoal } from "@/lib/actions/planning";
+import { safeAction } from "@/lib/safe-action";
 import { formatShortDate, fromISO, todayISO } from "@/lib/dates";
 import { formatINR, formatPercent } from "@/lib/format";
 import type { Tables } from "@/types/database";
@@ -172,7 +173,7 @@ function ContributionSheet({ goal, onClose }: { goal: GoalRow; onClose: () => vo
       submitLabel="Add"
       successMessage="Saved."
       onSubmit={async () => {
-        const r = await contributeToGoal({ id: goal.id, amount });
+        const r = await safeAction(() => contributeToGoal({ id: goal.id, amount }));
         if (r.ok && r.data.achieved) start(() => void toast(`You reached ${goal.name}!`, { icon: <PartyPopper className="size-4 text-brand" /> }));
         return r;
       }}

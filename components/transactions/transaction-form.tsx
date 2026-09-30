@@ -22,6 +22,7 @@ import {
 import { createTransaction, deleteTransaction, updateTransaction } from "@/lib/actions/transactions";
 import { formatDay, todayISO } from "@/lib/dates";
 import { formatINR } from "@/lib/format";
+import { safeAction } from "@/lib/safe-action";
 import { cn } from "@/lib/utils";
 import type { Category, CustomField, EditableTransaction, TransactionType } from "@/types/app";
 
@@ -107,7 +108,7 @@ export function TransactionForm({ categories, customFields, editing, draft, onDo
     };
 
     startTransition(async () => {
-      const result = editing ? await updateTransaction(editing.id, input) : await createTransaction(input);
+      const result = await safeAction(() => (editing ? updateTransaction(editing.id, input) : createTransaction(input)));
       if (!result.ok) {
         setError(result.error);
         return;
@@ -121,7 +122,7 @@ export function TransactionForm({ categories, customFields, editing, draft, onDo
           action: {
             label: "Undo",
             onClick: async () => {
-              const undo = await deleteTransaction(createdId);
+              const undo = await safeAction(() => deleteTransaction(createdId));
               if (undo.ok) toast("Removed.");
             },
           },
@@ -133,7 +134,7 @@ export function TransactionForm({ categories, customFields, editing, draft, onDo
   function remove() {
     if (!editing) return;
     startTransition(async () => {
-      const result = await deleteTransaction(editing.id);
+      const result = await safeAction(() => deleteTransaction(editing.id));
       setConfirmDelete(false);
       if (!result.ok) {
         setError(result.error);
@@ -203,7 +204,7 @@ export function TransactionForm({ categories, customFields, editing, draft, onDo
                   aria-pressed={selected}
                   onClick={() => pickCategory(c.id)}
                   className={cn(
-                    "flex min-h-[76px] flex-col items-center justify-center gap-1.5 rounded-2xl border bg-card px-1 py-2 text-[0.72rem] leading-tight font-medium transition active:scale-[0.97]",
+                    "flex min-h-[76px] flex-col items-center justify-center gap-1.5 rounded-2xl border bg-card px-0.5 py-2 text-[0.7rem] leading-tight font-medium transition active:scale-[0.97]",
                     selected ? "border-brand bg-brand-soft text-brand-strong" : "hover:border-foreground/15",
                   )}
                 >

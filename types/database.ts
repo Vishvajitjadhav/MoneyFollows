@@ -291,6 +291,10 @@ export type Database = {
         };
         Returns: FoundTransaction[];
       };
+      top_transactions: {
+        Args: { p_from: string; p_to: string; p_type?: TransactionType; p_purchase_only?: boolean; p_limit?: number };
+        Returns: Omit<FoundTransaction, "total_count" | "total_expense" | "total_income" | "total_investment">[];
+      };
       recurrence_next: {
         Args: { p_start: string; p_after: string; p_frequency: RecurrenceFrequency };
         Returns: string;

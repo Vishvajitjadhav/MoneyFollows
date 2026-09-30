@@ -49,7 +49,7 @@ export function TransactionSheetProvider({
       setState({ mode: "edit", tx, key: Date.now() });
       setOpen(true);
       if (customFields.length) {
-        const values = await getTransactionCustomFields(tx.id);
+        const values = await getTransactionCustomFields(tx.id).catch(() => ({}));
         setState((s) => (s.mode === "edit" && s.tx.id === tx.id ? { ...s, tx: { ...s.tx, customFields: values }, key: s.key + 1 } : s));
       }
     },

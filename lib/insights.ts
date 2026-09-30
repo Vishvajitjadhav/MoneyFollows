@@ -50,7 +50,9 @@ export function buildInsights(i: InsightInput, max = 5): Insight[] {
     }
 
     const changes = compareCategoryTotals(i.categories, i.previousCategories).filter(
-      (c) => c.previous > 0 && c.current > 0 && c.changePct !== null && Math.abs(c.changePct) >= 0.15 && Math.abs(c.change) >= 300,
+      // Family has its own insight below.
+      (c) =>
+        c.icon !== "family" && c.previous > 0 && c.current > 0 && c.changePct !== null && Math.abs(c.changePct) >= 0.15 && Math.abs(c.change) >= 300,
     );
     for (const c of changes.slice(0, 2)) {
       out.push({

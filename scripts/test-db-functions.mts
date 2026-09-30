@@ -121,6 +121,11 @@ try {
   const text = await db.query("select * from public.find_transactions(p_query => 'food')");
   check("search by category name", text.rows.length === 2);
 
+  const top = await db.query("select * from public.top_transactions('2026-08-01','2026-09-30', 'EXPENSE', false, 3)");
+  check("top_transactions largest first", top.rows.length === 3 && num(top.rows[0].amount) === 8500 && num(top.rows[1].amount) === 700, top.rows.map((r) => num(r.amount)));
+  const topP = await db.query("select * from public.top_transactions('2026-09-01','2026-09-30', 'EXPENSE', true)");
+  check("top_transactions purchases only", topP.rows.length === 1 && topP.rows[0].description === "Casio watch");
+
   // ── recurring
   const nx = async (start: string, after: string, f: string) =>
     String((await db.query("select public.recurrence_next($1::date,$2::date,$3::public.recurrence_frequency)::text d", [start, after, f])).rows[0].d);
