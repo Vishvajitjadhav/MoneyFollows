@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { Logo, LogoMark } from "@/components/brand/logo";
 import { CategoryIcon, CATEGORY_COLORS } from "@/components/category-icon";
 import { EmptyState } from "@/components/empty-state";
 import { MoneyText } from "@/components/money-text";
@@ -42,6 +43,36 @@ export default function DesignPage() {
         title="Design system"
         description="Follow your money. Tokens, type and components in one place."
       />
+
+      <Section title="Brand">
+        <div className="grid gap-3 md:grid-cols-3">
+          <div className="flex h-28 items-center justify-center rounded-2xl border bg-card">
+            <Logo size="md" />
+          </div>
+          <div className="flex h-28 items-center justify-center rounded-2xl bg-[#121212] text-white">
+            <Logo size="md" />
+          </div>
+          <div className="flex h-28 items-center justify-center rounded-2xl border bg-card">
+            <Logo size="md" tone="mono" />
+          </div>
+        </div>
+        <div className="mt-4 flex flex-wrap items-end gap-5 rounded-2xl border bg-card p-5">
+          {[16, 24, 32, 48, 64, 96].map((s) => (
+            <div key={s} className="flex flex-col items-center gap-2">
+              <LogoMark size={s} />
+              <span className="text-xs text-muted-foreground">{s}px</span>
+            </div>
+          ))}
+          <div className="flex flex-col items-center gap-2">
+            <LogoMark size={48} variant="coral" />
+            <span className="text-xs text-muted-foreground">coral</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <LogoMark size={48} variant="mono" />
+            <span className="text-xs text-muted-foreground">mono</span>
+          </div>
+        </div>
+      </Section>
 
       <Section title="Color">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">

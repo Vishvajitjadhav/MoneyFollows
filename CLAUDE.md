@@ -7,6 +7,7 @@ Mobile-first personal finance PWA — "Follow your money."
 ## Start of every session
 1. Read `PLAN.md` — find **▶ NEXT UP** and continue from there.
 2. Full product requirements live in `docs/SPEC.md` (product vision, categories, UX rules, schema). Check it before building a feature.
+   Brand rules (logo, colors, type, components) live in `docs/BRAND.md`.
 3. Build one task at a time. When a task is done **and verified**, tick it `[x]` in `PLAN.md`, move the **▶ NEXT UP** pointer, and add a line to the session log.
 
 ## Rules

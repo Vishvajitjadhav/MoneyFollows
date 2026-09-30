@@ -13,7 +13,7 @@
 
 ## ▶ NEXT UP
 
-**Phase 1 → 1.3 Logo & branding** (MF monogram SVG, `components/brand/Logo.tsx`, favicon + PWA icons)
+**Phase 1 → 1.4 Supabase setup** — ⚠️ needs the user first: create a free Supabase project and put URL + anon/publishable key in `.env.local` (see `.env.example`). Then build `lib/supabase/*` + `proxy.ts`.
 
 _Update this pointer whenever a task is completed._
 
@@ -24,7 +24,8 @@ _Update this pointer whenever a task is completed._
 | Date | What was done |
 |------|---------------|
 | 2026-09-30 | Project setup: Next.js 16.3 + React 19 + TS + Tailwind v4 + shadcn/ui (radix-nova) + deps. Folder structure. PLAN.md created. Pushed to GitHub `main`. |
-| 2026-09-30 | 1.2 Design system on branch `feature/design-system`: brand tokens, money utilities, `formatINR`, StatCard/MoneyText/EmptyState/PageHeader/CategoryIcon, Toaster, `/design` preview. |
+| 2026-09-30 | 1.2 Design system on branch `feature/design-system`: brand tokens, money utilities, `formatINR`, StatCard/MoneyText/EmptyState/PageHeader/CategoryIcon, Toaster, `/design` preview. Merged to `main`. |
+| 2026-09-30 | 1.3 Logo & branding on `feature/branding`: MF-trail mark (`components/brand/mark.ts`), `<Logo/>`/`<LogoMark/>`, `npm run icons` generator (favicon, apple, PWA, brand kit), `docs/BRAND.md`. Merged to `main`. |
 
 ---
 
@@ -113,13 +114,14 @@ Separation rule: **UI ↔ business logic ↔ database ↔ validation ↔ calcula
 - [x] Toaster (`components/ui/sonner.tsx`, top-center, branded) + TooltipProvider + mobile `viewport` in root layout
 - [x] Design-system preview page `/design` (dev only, 404 in production)
 
-### 1.3 Logo & branding
-- [ ] Design MF monogram / money-trail SVG (icon-only) — test at 16/32/64/512px
-- [ ] Horizontal logo (icon + "MoneyFollows" wordmark)
-- [ ] Variants: monochrome, light-bg, dark-bg
-- [ ] `components/brand/Logo.tsx` (props: variant, size, withWordmark)
-- [ ] Favicon (`app/icon.svg` / `favicon.ico`), apple-icon, PWA icons 192/512 + maskable
-- [ ] Brand guide section documented (colors, type, radius, buttons, cards)
+### 1.3 Logo & branding ✅
+- [x] MF-trail mark: M's right leg is the F's stem, F top bar leads into a dot ("the line follows the money") — geometry in `components/brand/mark.ts`; tested at 16/32/64/160px
+- [x] Horizontal logo (mark + "Money**Follows**" wordmark)
+- [x] Variants: light-bg, dark-bg, monochrome, coral/ink/white mark-only (`public/brand/*`)
+- [x] `components/brand/logo.tsx` — `<Logo size tone />`, `<LogoMark variant size />`
+- [x] `npm run icons` (`scripts/generate-icons.mts`, sharp) → `app/icon.svg`, `app/favicon.ico` (16/32/48), `app/apple-icon.png`, `public/icons/icon-192|512.png`, `maskable-512.png`, `public/brand/mark-1024.png`
+- [x] Brand guide `docs/BRAND.md` (logo rules, colors, type, icons, buttons, cards, radius, visual language, PDF usage)
+- [x] Brand section on `/design`; placeholder home uses the mark
 
 ### 1.4 Supabase setup
 - [ ] Create Supabase project (user does this in dashboard) and fill `.env.local`
