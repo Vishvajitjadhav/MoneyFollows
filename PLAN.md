@@ -13,7 +13,11 @@
 
 ## ▶ NEXT UP
 
-**Phase 1 → 1.4 Supabase setup** — ⚠️ needs the user first: create a free Supabase project and put URL + anon/publishable key in `.env.local` (see `.env.example`). Then build `lib/supabase/*` + `proxy.ts`.
+**Phase 1 → finish 1.4–1.7 on branch `feature/supabase-auth`** (code written, needs verification):
+1. User: put real DB password into `DATABASE_URL`/`DIRECT_URL` in `.env.local` (still `[YOUR-PASSWORD]`) and fill `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+2. `npm run db:migrate` → `npm run db:test-rls` (must be all ✓).
+3. Supabase Dashboard → Authentication → URL Configuration: Site URL `http://localhost:3000`, Redirect URLs `http://localhost:3000/**` (+ Vercel URL later).
+4. Test signup / login / logout / forgot + reset password in browser; tick boxes; merge to `main`.
 
 _Update this pointer whenever a task is completed._
 
@@ -26,6 +30,7 @@ _Update this pointer whenever a task is completed._
 | 2026-09-30 | Project setup: Next.js 16.3 + React 19 + TS + Tailwind v4 + shadcn/ui (radix-nova) + deps. Folder structure. PLAN.md created. Pushed to GitHub `main`. |
 | 2026-09-30 | 1.2 Design system on branch `feature/design-system`: brand tokens, money utilities, `formatINR`, StatCard/MoneyText/EmptyState/PageHeader/CategoryIcon, Toaster, `/design` preview. Merged to `main`. |
 | 2026-09-30 | 1.3 Logo & branding on `feature/branding`: MF-trail mark (`components/brand/mark.ts`), `<Logo/>`/`<LogoMark/>`, `npm run icons` generator (favicon, apple, PWA, brand kit), `docs/BRAND.md`. Merged to `main`. |
+| 2026-09-30 | 1.4–1.7 code on `feature/supabase-auth`: Supabase clients, `proxy.ts`, auth pages/actions/callback, schema + RLS + seed migrations, migration runner, RLS test script. Blocked on DB password + publishable key. |
 
 ---
 
@@ -124,41 +129,38 @@ Separation rule: **UI ↔ business logic ↔ database ↔ validation ↔ calcula
 - [x] Brand section on `/design`; placeholder home uses the mark
 
 ### 1.4 Supabase setup
-- [ ] Create Supabase project (user does this in dashboard) and fill `.env.local`
-- [ ] `lib/supabase/server.ts` (server client, cookies) and `lib/supabase/client.ts` (browser client)
-- [ ] `proxy.ts` — refresh session + redirect unauthenticated users away from app routes
-- [ ] Generate DB types into `types/database.ts` (`supabase gen types` or hand-written)
+- [ ] Create Supabase project (user) and fill `.env.local` — project URL ✓, DB URLs ✓ (password placeholder!), publishable key ✗
+- [x] `lib/supabase/server.ts` (server client, cookies), `client.ts` (browser), `env.ts` (validated public env)
+- [x] `proxy.ts` + `lib/supabase/proxy.ts` — refresh session via `getClaims()`, redirect signed-out users to `/login?next=`, signed-in users away from auth pages
+- [x] DB types hand-written in `types/database.ts` (generated-types shape, incl. relationships) — regenerate with Supabase CLI later
+- [x] `npm run db:migrate` (`scripts/db-migrate.mts`, tracks applied files in `app_private.migrations`)
 
 ### 1.5 Authentication
-- [ ] Sign up (email + password, name)
-- [ ] Login
-- [ ] Logout
-- [ ] Forgot password → email → reset password page
-- [ ] Auth callback route (`app/auth/callback/route.ts` / confirm)
-- [ ] Protected `(app)` routes; `getUser()` server-side helper — never trust client `user_id`
-- [ ] Auth screens branded, mobile-first
+- [ ] Sign up (email + password, name) — `app/(auth)/signup`, code done, untested
+- [ ] Login — `app/(auth)/login`, supports `?next=`, code done, untested
+- [ ] Logout — server action, code done, untested
+- [ ] Forgot password → email → `/auth/callback` → `/reset-password`, code done, untested
+- [x] Auth callback route (`app/auth/callback/route.ts`) — PKCE `code` + `token_hash` links, safe `next` redirect
+- [x] Protected `(app)` route group; `lib/auth.ts` `getCurrentUser()`/`requireUser()` (per-request cached, JWT-verified)
+- [x] Auth screens branded, mobile-first (coral brand panel on desktop), password show/hide, friendly error copy, no account enumeration on reset
+- [ ] Supabase Auth URL configuration (Site URL + redirect URLs) — user, in dashboard
 
-### 1.6 Database schema (`database/migrations/0001_schema.sql`)
-- [ ] `profiles` (id = auth.users.id, full_name, currency default 'INR', created_at) + trigger to auto-create on signup
-- [ ] `categories` (user_id, name, type EXPENSE/INCOME/INVESTMENT, icon, color, sort_order, is_system, archived)
-- [ ] `subcategories` (user_id, category_id FK, name, sort_order, archived)
-- [ ] `transactions` (id, user_id, type, amount numeric(14,2) > 0, category_id, subcategory_id, transaction_date, description, notes, custom_metadata jsonb, is_purchase, recurring_id, created_at, updated_at)
-- [ ] `custom_field_definitions` (user_id, name, field_type text/number/dropdown/boolean/date, options jsonb)
-- [ ] `transaction_custom_fields` (transaction_id, field_id, value jsonb)
-- [ ] `budgets` (user_id, category_id, month date, amount) unique(user, category, month)
-- [ ] `investments` (user_id, name, type SIP/MF/STOCKS/PPF/FD/OTHER, amount, frequency, start_date, notes)
-- [ ] `recurring_transactions` (user_id, type, amount, category_id, subcategory_id, frequency, start_date, end_date, next_run_date, active)
-- [ ] `financial_goals` (user_id, name, target_amount, current_amount, target_date, icon)
-- [ ] `monthly_plans` (user_id, month, income, allocations jsonb)
-- [ ] Indexes: user_id, transaction_date, category_id, subcategory_id, type; composite (user_id, transaction_date desc)
-- [ ] FKs + CHECK constraints + `updated_at` trigger
-- [ ] Default categories seeded per user on signup (function `seed_default_categories(user_id)`) — Food, Transport, Housing, Bills, Family, Lifestyle, Shopping, Entertainment, Health, Education, Other + income categories (Salary, Freelance, Side income, Bonus, Gift, Refund, Other) + investment types
+### 1.6 Database schema (`database/migrations/0001_schema.sql`, `0003_new_user_seed.sql`) — written, NOT applied yet
+- [ ] Applied to Supabase (`npm run db:migrate`)
+- [x] `profiles` + `handle_new_user` trigger (profile + default categories on signup, backfills existing users)
+- [x] `categories`, `subcategories` (case-insensitive unique names, `archived_at` instead of delete)
+- [x] `transactions` (numeric(14,2) > 0, `custom_metadata` jsonb object, `is_purchase`, `recurring_id`, `investment_id`)
+- [x] `custom_field_definitions`, `transaction_custom_fields`
+- [x] `budgets` (month = 1st of month, unique per category/month), `investments`, `recurring_transactions` (`next_run_date`), `financial_goals`, `monthly_plans`
+- [x] Indexes: (user_id, transaction_date desc), (user_id, type, date), category, subcategory, purchases, recurring
+- [x] Composite FKs `(id, user_id[, type|category_id])` → a row can't reference another user's category, a subcategory from a different category, or a category of a different type
+- [x] CHECK constraints + `updated_at` triggers
+- [x] `seed_default_categories()` — 11 expense (50 subcategories), 7 income, 6 investment categories
 
-### 1.7 Row Level Security (`database/migrations/0002_rls.sql`)
-- [ ] Enable RLS on every table
-- [ ] Policies: select/insert/update/delete only where `user_id = auth.uid()`
-- [ ] Child tables (subcategories, transaction_custom_fields) also check parent ownership
-- [ ] Test: user A cannot read/write user B's rows (document test steps)
+### 1.7 Row Level Security (`database/migrations/0002_rls.sql`) — written, NOT applied yet
+- [x] RLS enabled on every table; select/insert/update/delete only where `user_id = (select auth.uid())`; anon revoked
+- [x] Seed/trigger functions `security definer` + `search_path = ''`, execute revoked from clients
+- [ ] `npm run db:test-rls` passes (18 checks: isolation, cross-user FK abuse, type/subcategory mismatch, anon denied — all in a rolled-back transaction)
 
 ### 1.8 Responsive app shell
 - [ ] Mobile: bottom nav `Home | History | + | Analysis | More`, center + is the hero
@@ -283,5 +285,8 @@ CSV/bank statement import · auto-categorization · subscription detection · AI
 - **2026-09-30** — shadcn `radix-nova` style with Radix primitives; shadcn now uses the `cn` package (`lib/utils.ts` re-exports it).
 - **2026-09-30** — Amounts stored as `numeric(14,2)` (always positive); `type` decides sign. Currency INR by default (stored on profile for future).
 - **2026-09-30** — Category `icon`/`color` stored as string keys (e.g. `food`, `orange`) resolved by `components/category-icon.tsx`; unknown keys fall back to `other`/`slate`.
+- **2026-09-30** — Auth identity via `supabase.auth.getClaims()` (local JWT verification) in proxy + `lib/auth.ts`; RLS is the real guard.
+- **2026-09-30** — Auth forms use Server Actions + `useActionState` + Zod (server-side) instead of React Hook Form — less client JS, works without JS. RHF reserved for richer forms.
+- **2026-09-30** — Migrations are plain SQL in `database/migrations`, applied with `npm run db:migrate` (no Supabase CLI/Docker needed).
 - **2026-09-30** — Feature work happens on branches (`feature/<name>`), merged to `main` after verification.
 - **2026-09-30** — Default categories are seeded **per user** (rows owned by user) so users can rename/archive freely without global tables.
